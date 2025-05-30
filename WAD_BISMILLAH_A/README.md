@@ -1,66 +1,118 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem Manajemen Kelas Gym
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistem ini dirancang untuk mengelola kelas-kelas di gym dengan fitur lengkap untuk manajemen jadwal, instruktur, dan kapasitas kelas.
 
-## About Laravel
+## Fitur Sistem
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### 1. Manajemen Kelas
+- **Tambah Kelas Baru**
+  - Nama Kelas (contoh: Yoga, Zumba, Pilates)
+  - Kapasitas Peserta
+  - Ruangan
+  - Instruktur
+  - Jadwal (Hari dan Waktu)
+  - Deskripsi Kelas
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Lihat Data Kelas**
+  - Tampilan tabel yang informatif
+  - Nomor urut
+  - Detail kelas lengkap
+  - Status kapasitas
+  - Jadwal terorganisir
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Edit Kelas**
+  - Pembaruan informasi kelas
+  - Perubahan jadwal
+  - Pengaturan kapasitas
+  - Pergantian instruktur
 
-## Learning Laravel
+- **Hapus Kelas**
+  - Fitur konfirmasi sebelum penghapusan
+  - Penghapusan aman dari database
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 2. Struktur Database
+Tabel `classes` memiliki kolom-kolom berikut:
+- `id` (Primary Key)
+- `name` (Nama Kelas)
+- `capacity` (Kapasitas Peserta)
+- `room` (Ruangan)
+- `instructor` (Nama Instruktur)
+- `schedule_day` (Hari Jadwal)
+- `start_time` (Waktu Mulai)
+- `end_time` (Waktu Selesai)
+- `description` (Deskripsi Kelas)
+- `created_at` (Waktu Pembuatan)
+- `updated_at` (Waktu Update)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 3. Validasi Data
+Sistem memiliki validasi untuk:
+- Nama kelas wajib diisi
+- Kapasitas harus berupa angka
+- Ruangan wajib diisi
+- Instruktur wajib diisi
+- Jadwal harus valid
+- Format waktu yang sesuai
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 4. Antarmuka Pengguna
+- **Halaman Utama**
+  - Daftar kelas dalam format tabel
+  - Tombol tambah kelas baru
+  - Aksi edit dan hapus untuk setiap kelas
+  - Pesan sukses setelah aksi
 
-## Laravel Sponsors
+- **Form Tambah/Edit**
+  - Input yang mudah dipahami
+  - Validasi real-time
+  - Pesan error yang informatif
+  - Tombol simpan dan kembali
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 5. Keamanan
+- CSRF Protection
+- Validasi input
+- Konfirmasi sebelum penghapusan
+- Sanitasi data
 
-### Premium Partners
+## Cara Penggunaan
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### Menambah Kelas Baru
+1. Klik tombol "Tambah Kelas Baru"
+2. Isi formulir dengan data yang diperlukan:
+   - Nama Kelas
+   - Kapasitas
+   - Ruangan
+   - Instruktur
+   - Pilih hari jadwal
+   - Set waktu mulai dan selesai
+   - Tambahkan deskripsi (opsional)
+3. Klik "Simpan Kelas"
 
-## Contributing
+### Mengedit Kelas
+1. Klik tombol "Edit" pada kelas yang ingin diubah
+2. Ubah data yang diperlukan
+3. Klik "Update Kelas" untuk menyimpan perubahan
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Menghapus Kelas
+1. Klik tombol "Hapus" pada kelas yang ingin dihapus
+2. Konfirmasi penghapusan pada dialog yang muncul
 
-## Code of Conduct
+## Teknologi yang Digunakan
+- Laravel Framework
+- MySQL Database
+- Bootstrap 5
+- JavaScript
+- HTML5 & CSS3
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Kebutuhan Sistem
+- PHP >= 8.0
+- MySQL
+- Composer
+- Node.js & NPM (untuk asset compilation)
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Instalasi
+1. Clone repository
+2. Install dependencies: `composer install`
+3. Copy `.env.example` ke `.env`
+4. Generate key: `php artisan key:generate`
+5. Setting database di `.env`
+6. Jalankan migrasi: `php artisan migrate`
+7. Jalankan server: `php artisan serve`

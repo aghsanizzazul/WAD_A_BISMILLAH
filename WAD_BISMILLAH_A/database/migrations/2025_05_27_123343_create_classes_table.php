@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('classes', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->integer('capacity');
+            $table->string('room');
+            $table->string('instructor');
+            $table->string('schedule_day');
+            $table->time('start_time');
+            $table->time('end_time');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

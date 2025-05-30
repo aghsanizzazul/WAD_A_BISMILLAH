@@ -11,7 +11,6 @@ class KelasController extends Controller
     public function index()
     {
         $kelas = Kelas::all();
-        dd($kelas);
         return view('welcome', compact('kelas'));
     }
 
