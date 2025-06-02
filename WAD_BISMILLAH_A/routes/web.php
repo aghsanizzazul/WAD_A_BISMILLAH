@@ -27,3 +27,22 @@ Route::get('/admin/pembayaran/create', [PembayaranController::class, 'create'])-
 Route::post('/admin/pembayaran', [PembayaranController::class, 'store'])->name('pembayaran.store');
 
 
+Route::get('/dzulfikar-dashboard', [PembayaranController::class, 'dashboard']);
+Route::get('/dzulfikar-paket', [LanggananController::class, 'index']);
+
+Route::get('/dzulfikar-test', [PembayaranController::class, 'dashboard']);
+Route::get('/dzulfikar-input', [PembayaranController::class, 'create']);
+
+Route::get('/admin/dashboard', [PembayaranController::class, 'dashboard'])->name('admin.dashboard');
+
+// Edit form
+Route::get('/admin/pembayaran/{id}/edit', [PembayaranController::class, 'edit'])->name('pembayaran.edit');
+// Update action
+Route::put('/admin/pembayaran/{id}', [PembayaranController::class, 'update'])->name('pembayaran.update');
+// Delete
+Route::delete('/admin/pembayaran/{id}', [PembayaranController::class, 'destroy'])->name('pembayaran.destroy');
+
+
+
+
+

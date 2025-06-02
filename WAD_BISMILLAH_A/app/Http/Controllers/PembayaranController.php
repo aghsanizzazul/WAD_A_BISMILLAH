@@ -6,7 +6,7 @@ use App\Models\Pembayaran;
 use App\Models\Member;
 use Illuminate\Http\Request;
 use App\Models\Langganan;
-
+use Illuminate\Support\Carbon;
 
 class PembayaranController extends Controller
 {
@@ -53,12 +53,55 @@ public function store(Request $request)
         return response()->json(['message' => 'Pembayaran dihapus']);
     }
 
-    public function dashboard()
-{
-    $pembayaran = Pembayaran::with('member', 'langganan')->latest()->take(10)->get();
-    return view('admin.dashboard', compact('pembayaran'));
-}
+    public function dashboard(Request $request)
+    {
+        $filter = $request->query('filter', 'harian'); // default harian
 
+        $query = Pembayaran::with('member');
+
+        // Filter berdasarkan periode
+        if ($filter === 'harian') {
+            $query->whereDate('payment_date', Carbon::today());
+        } elseif ($filter === 'mingguan') {
+            $query->whereBetween('payment_date', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()]);
+        } elseif ($filter === 'bulanan') {
+            $query->whereMonth('payment_date', Carbon::now()->month)
+                    ->whereYear('payment_date', Carbon::now()->year);
+        } else {
+            $filter = 'semua'; // fallback kalau bukan 3 di atas
+        }
+
+        $pembayaran = $query->orderByDesc('payment_date')->get();
+        $totalPeriode = $pembayaran->sum('amount'); // total dari hasil filter
+        $totalSemua = Pembayaran::sum('amount');    // total keseluruhan untuk saldo GYM
+
+        return view('admin.dashboard', compact('pembayaran', 'totalSemua', 'totalPeriode', 'filter'));
+    }
+
+    public function edit($id)
+        {
+            $pembayaran = Pembayaran::findOrFail($id);
+            $members = Member::all();
+            $langganan = Langganan::all();
+
+            return view('admin.pembayaran.form', compact('pembayaran', 'members', 'langganan'));
+        }
+
+    public function update(Request $request, $id)
+        {
+            $request->validate([
+                'member_id' => 'required|exists:members,id',
+                'langganan_id' => 'required|exists:langganan,id',
+                'payment_method' => 'required|in:credit_card,bank_transfer',
+                'amount' => 'required|numeric|min:0',
+                'payment_date' => 'required|date',
+            ]);
+
+            $pembayaran = Pembayaran::findOrFail($id);
+            $pembayaran->update($request->all());
+
+            return redirect()->route('admin.dashboard')->with('success', 'Pembayaran diperbarui.');
+        }
 
 
 }
