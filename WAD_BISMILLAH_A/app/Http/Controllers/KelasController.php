@@ -7,10 +7,7 @@ use App\Models\Kelas;
 
 class KelasController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth')->except(['index']);
-    }
+
 
     // Menampilkan semua kelas
     public function index()

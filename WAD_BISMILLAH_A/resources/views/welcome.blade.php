@@ -55,15 +55,16 @@
                                     <td>
                                         <div class="btn-group" role="group">
                                             <a href="{{ route('classes.edit', $class->id) }}" 
-                                               class="btn btn-warning btn-sm">
+                                               class="btn btn-primary me-2">
                                                 Edit
                                             </a>
                                             <form action="{{ route('classes.destroy', $class->id) }}" 
                                                   method="POST" 
-                                                  onsubmit="return confirm('Apakah Anda yakin ingin menghapus kelas ini?');">
+                                                  onsubmit="return confirm('Apakah Anda yakin ingin menghapus kelas ini?');"
+                                                  class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                <button type="submit" class="btn btn-danger">
                                                     Hapus
                                                 </button>
                                             </form>
