@@ -1,88 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Kelas Gym</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-5">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Data Kelas Gym</h1>
-            <a href="{{ route('classes.create') }}" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> Tambah Kelas Baru
-            </a>
+@extends('layouts.app')
+
+@section('content')
+<div class="p-10">
+    <h1 class="text-3xl font-bold mb-4">Admin Payment Dashboard</h1>
+
+    <div class="grid grid-cols-3 gap-6">
+
+        {{-- Kartu Saldo --}}
+        <div class="bg-purple-800 text-white p-6 rounded-2xl shadow">
+            <div class="text-xl font-bold mb-2">Saldo Utama:</div>
+            <div class="text-3xl font-extrabold mb-4">RP.10.000.000</div>
+            <div class="text-sm">VALID THRU 03/25</div>
+            <div class="text-sm mb-2">Admin GYM TELKOM UNIVERSITY</div>
+            <div class="text-sm">**** **** **** 4563</div>
         </div>
 
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
+        {{-- Ringkasan Mingguan --}}
+        <div class="bg-white p-6 rounded-2xl shadow col-span-2">
+            <h2 class="text-lg font-bold mb-4">Ringkasan Mingguan</h2>
+            <canvas id="summaryChart"></canvas>
+        </div>
 
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>No</th>
-                                <th>Nama Kelas</th>
-                                <th>Instruktur</th>
-                                <th>Jadwal</th>
-                                <th>Kapasitas</th>
-                                <th>Ruangan</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($classes as $index => $class)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>{{ $class->name }}</td>
-                                    <td>{{ $class->instructor }}</td>
-                                    <td>
-                                        {{ $class->schedule_day }}<br>
-                                        <small class="text-muted">
-                                            {{ \Carbon\Carbon::parse($class->start_time)->format('H:i') }} - 
-                                            {{ \Carbon\Carbon::parse($class->end_time)->format('H:i') }}
-                                        </small>
-                                    </td>
-                                    <td>{{ $class->capacity }} orang</td>
-                                    <td>{{ $class->room }}</td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <a href="{{ route('classes.edit', $class->id) }}" 
-                                               class="btn btn-primary me-2">
-                                                Edit
-                                            </a>
-                                            <form action="{{ route('classes.destroy', $class->id) }}" 
-                                                  method="POST" 
-                                                  onsubmit="return confirm('Apakah Anda yakin ingin menghapus kelas ini?');"
-                                                  class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger">
-                                                    Hapus
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="7" class="text-center">Tidak ada data kelas</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+        {{-- Saldo Dompet --}}
+        <div class="bg-indigo-100 p-6 rounded-2xl shadow">
+            <div class="text-sm">Saldo Dompet GYM:</div>
+            <div class="text-2xl font-bold text-indigo-700">RP.159.500.000</div>
+            <div class="text-sm text-red-500">-10% Dari Minggu Lalu</div>
+            <div class="flex mt-4 gap-4">
+                <button class="bg-blue-600 text-white px-4 py-2 rounded">Kirim Tagihan</button>
+                <button class="bg-green-600 text-white px-4 py-2 rounded">Transfer Dana</button>
+            </div>
+        </div>
+
+        {{-- Riwayat Pembayaran --}}
+        <div class="col-span-2 bg-black text-white p-6 rounded-2xl shadow">
+            <h2 class="text-lg font-bold mb-4">Riwayat Pembayaran Member</h2>
+            <div class="flex gap-4 mb-2">
+                <button class="underline">Hari ini</button>
+                <button>Mingguan</button>
+                <button>Bulanan</button>
+            </div>
+
+            {{-- Loop Data --}}
+            @foreach($pembayaran as $data)
+            <div class="flex items-center justify-between bg-gray-800 p-4 rounded mb-2">
+                <div class="flex items-center gap-4">
+                    <img src="https://ui-avatars.com/api/?name={{ $data->member->name }}" class="w-10 h-10 rounded-full" />
+                    <div>
+                        <div class="font-bold">{{ $data->member->name }}</div>
+                        <div class="text-sm">{{ $data->keterangan ?? 'Pembayaran' }}</div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm">{{ \Carbon\Carbon::parse($data->payment_date)->format('d F Y, H:i') }}</div>
+                    <div class="text-green-400 font-bold">+Rp{{ number_format($data->amount, 0, ',', '.') }}</div>
+                    <div class="text-sm">{{ ucfirst($data->payment_method) }}</div>
+                </div>
+                <div>
+                    <span class="px-3 py-1 bg-purple-600 text-white rounded">
+                        {{ ucfirst($data->status ?? 'Menunggu') }}
+                    </span>
                 </div>
             </div>
+            @endforeach
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    </div>
+</div>
+@endsection

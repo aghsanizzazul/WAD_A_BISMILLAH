@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subscription_packages', function (Blueprint $table) {
+        Schema::create('langganan', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->integer('duration_days'); // durasi dalam hari
