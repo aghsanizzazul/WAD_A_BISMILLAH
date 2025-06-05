@@ -9,11 +9,16 @@ class Kelas extends Model
 {
     use HasFactory;
 
-    protected $table = 'classes';
+    protected $table = 'kelas';
 
     protected $fillable = [
         'name',
         'capacity',
         'room',
+        'instructor',
+        'schedule_day',
+        'start_time',
+        'end_time',
+        'description'
     ];
 }

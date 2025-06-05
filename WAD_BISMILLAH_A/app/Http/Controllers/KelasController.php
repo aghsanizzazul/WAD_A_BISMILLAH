@@ -10,8 +10,8 @@ class KelasController extends Controller
     // Menampilkan semua kelas
     public function index()
     {
-        $kelas = Kelas::all();
-        return view('welcome', compact('kelas'));
+        $classes = Kelas::all();
+        return view('welcome', compact('classes'));
     }
 
     // Menampilkan form tambah kelas
@@ -24,9 +24,14 @@ class KelasController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:kelas,name',
+            'name' => 'required',
             'capacity' => 'required|integer|min:1',
             'room' => 'required|string|max:100',
+            'instructor' => 'required|string',
+            'schedule_day' => 'required|string',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'description' => 'nullable|string'
         ]);
 
         Kelas::create($request->all());
@@ -55,6 +60,11 @@ class KelasController extends Controller
             'name' => 'required',
             'capacity' => 'required|integer|min:1',
             'room' => 'required|string|max:100',
+            'instructor' => 'required|string',
+            'schedule_day' => 'required|string',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'description' => 'nullable|string'
         ]);
 
         $class = Kelas::findOrFail($id);
