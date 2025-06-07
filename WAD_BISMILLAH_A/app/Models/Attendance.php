@@ -11,7 +11,7 @@ class Attendance extends Model
 
     protected $fillable = [
         'member_id',
-        'class_schedule_id',
+        'kelas_id',
         'check_in_time'
     ];
 
@@ -25,15 +25,15 @@ class Attendance extends Model
         return $this->belongsTo(Member::class);
     }
 
-    public function classSchedule()
+    public function kelas()
     {
-        return $this->belongsTo(ClassSchedule::class);
+        return $this->belongsTo(Kelas::class);
     }
 
     // Validation rules
     public static $rules = [
         'member_id' => 'required|exists:members,id',
-        'class_schedule_id' => 'required|exists:class_schedules,id',
+        'kelas_id' => 'required|exists:kelas,id',
         'check_in_time' => 'required|date'
     ];
 
