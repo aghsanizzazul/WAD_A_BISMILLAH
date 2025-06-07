@@ -9,18 +9,52 @@ class Member extends Model
 {
     use HasFactory;
 
-    protected $table = 'members';
-
     protected $fillable = [
         'name',
         'email',
         'phone',
-        'joined_at',
+        'join_date',
+        'status'
     ];
 
-    public function pembayaran()
+    protected $casts = [
+        'join_date' => 'date'
+    ];
+
+    // Ensure timestamps are enabled
+    public $timestamps = true;
+
+    // Relationship with payments
+    public function payments()
     {
         return $this->hasMany(Pembayaran::class);
     }
-}
 
+    // Relationship with subscriptions
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    // Get active subscription
+    public function activeSubscription()
+    {
+        return $this->subscriptions()
+            ->where('end_date', '>=', now())
+            ->where('payment_status', 'paid')
+            ->latest()
+            ->first();
+    }
+
+    // Scope for active members
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    // Scope for inactive members
+    public function scopeInactive($query)
+    {
+        return $query->where('status', 'inactive');
+    }
+}   

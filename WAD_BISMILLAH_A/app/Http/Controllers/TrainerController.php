@@ -13,10 +13,8 @@ class TrainerController extends Controller
      */
     public function index()
     {
-        $trainers = Trainer::withCount(['classSchedules' => function($query) {
-            $query->where('schedule_date', '>=', now());
-        }])->get();
-        return view('trainers.index', compact('trainers'));
+        $pelatih = Trainer::all();
+        return view('pelatih.index', compact('pelatih'));
     }
 
     /**
@@ -24,7 +22,7 @@ class TrainerController extends Controller
      */
     public function create()
     {
-        return view('trainers.create');
+        return view('pelatih.form');
     }
 
     /**
@@ -33,14 +31,15 @@ class TrainerController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'specialization' => 'required',
-            'phone' => 'required|regex:/^[0-9]{10,}$/',
-            'email' => 'required|email|unique:trainers'
+            'nama' => 'required',
+            'email' => 'required',
+            'nomor_telepon' => 'required',
+            'spesialisasi' => 'required',
+            'status' => 'required'
         ]);
 
         Trainer::create($request->all());
-        return redirect()->route('trainers.index')->with('success', 'Trainer created successfully.');
+        return redirect()->route('pelatih.index')->with('success', 'Trainer added successfully.');
     }
 
     /**
@@ -54,42 +53,34 @@ class TrainerController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Trainer $trainer)
+    public function edit(Trainer $pelatih)
     {
-        return view('trainers.edit', compact('trainer'));
+        return view('pelatih.form', compact('pelatih'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Trainer $trainer)
+    public function update(Request $request, Trainer $pelatih)
     {
         $request->validate([
-            'name' => 'required',
-            'specialization' => 'required',
-            'phone' => 'required|regex:/^[0-9]{10,}$/',
-            'email' => 'required|email|unique:trainers,email,' . $trainer->id
+            'nama' => 'required',
+            'email' => 'required',
+            'nomor_telepon' => 'required',
+            'spesialisasi' => 'required',
+            'status' => 'required'
         ]);
 
-        $trainer->update($request->all());
-        return redirect()->route('trainers.index')->with('success', 'Trainer updated successfully.');
+        $pelatih->update($request->all());
+        return redirect()->route('pelatih.index')->with('success', 'Trainer updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Trainer $trainer)
+    public function destroy(Trainer $pelatih)
     {
-        // Check if trainer has active classes
-        $hasActiveClasses = ClassSchedule::where('trainer_id', $trainer->id)
-            ->where('schedule_date', '>=', now())
-            ->exists();
-
-        if ($hasActiveClasses) {
-            return back()->withErrors(['error' => 'Cannot delete trainer with active classes.']);
-        }
-
-        $trainer->delete();
-        return redirect()->route('trainers.index')->with('success', 'Trainer deleted successfully.');
+        $pelatih->delete();
+        return redirect()->route('pelatih.index')->with('success', 'Trainer deleted successfully.');
     }
 }

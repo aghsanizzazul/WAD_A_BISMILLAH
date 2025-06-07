@@ -3,39 +3,91 @@
 namespace App\Http\Controllers;
 
 use App\Models\Member;
-use App\Models\ClassSchedule;
-use App\Models\Trainer;
-use App\Models\Attendance;
+use App\Models\Pembayaran;
 use App\Models\Subscription;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $stats = [
-            'total_members' => Member::count(),
-            'active_members' => Member::where('status', 'active')->count(),
-            'total_trainers' => Trainer::count(),
-            'total_classes' => ClassSchedule::count(),
-            'today_attendances' => Attendance::whereDate('check_in_time', today())->count(),
-            'active_subscriptions' => Subscription::where('end_date', '>=', now())
-                                                ->where('payment_status', 'paid')
-                                                ->count(),
+        // Get filter period (default to daily)
+        $filter = $request->query('filter', 'harian');
+        
+        // Calculate date range based on filter
+        $startDate = now();
+        switch ($filter) {
+            case 'mingguan':
+                $startDate = $startDate->subWeek();
+                break;
+            case 'bulanan':
+                $startDate = $startDate->subMonth();
+                break;
+            case 'semua':
+                $startDate = null;
+                break;
+            default: // harian
+                $startDate = $startDate->startOfDay();
+        }
+
+        // Get total payments
+        $totalQuery = Pembayaran::query();
+        $periodQuery = Pembayaran::query();
+
+        if ($startDate) {
+            $periodQuery->where('payment_date', '>=', $startDate);
+        }
+
+        $totalSemua = $totalQuery->sum('amount');
+        $totalPeriode = $periodQuery->sum('amount');
+
+        // Get member statistics
+        $statistics = [
+            'total_members' => Member::count() ?? 0,
+            'active_members' => Member::active()->count() ?? 0,
+            'new_members' => $startDate ? Member::where('join_date', '>=', $startDate)->count() : Member::count() ?? 0,
+            'total_active_subscriptions' => Subscription::where('end_date', '>=', now())
+                                                      ->where('payment_status', 'paid')
+                                                      ->count() ?? 0,
+            'payment_methods' => Pembayaran::select('payment_method', DB::raw('count(*) as count'))
+                                         ->groupBy('payment_method')
+                                         ->get() ?? collect([])
         ];
 
-        $recent_members = Member::latest()->take(5)->get();
-        $upcoming_classes = ClassSchedule::where('schedule_date', '>=', now())
-                                       ->with('trainer')
-                                       ->orderBy('schedule_date')
-                                       ->take(5)
-                                       ->get();
-        
-        $recent_attendances = Attendance::with(['member', 'classSchedule'])
-                                      ->latest('check_in_time')
-                                      ->take(5)
-                                      ->get();
+        // Get recent members with their subscription status
+        $recentMembers = Member::with(['payments' => function($query) {
+                                    $query->latest()->limit(1);
+                                }])
+                               ->latest()
+                               ->take(5)
+                               ->get()
+                               ->map(function($member) {
+                                    $lastPayment = $member->payments->first();
+                                    return [
+                                        'id' => $member->id,
+                                        'name' => $member->name,
+                                        'email' => $member->email,
+                                        'join_date' => $member->join_date,
+                                        'status' => $member->status,
+                                        'last_payment' => $lastPayment ? $lastPayment->payment_date : null
+                                    ];
+                                });
 
-        return view('dashboard', compact('stats', 'recent_members', 'upcoming_classes', 'recent_attendances'));
+        // Get recent payments
+        $pembayaran = Pembayaran::with(['member', 'langganan'])
+                               ->latest('payment_date')
+                               ->take(5)
+                               ->get();
+
+        return view('dashboard', compact(
+            'filter',
+            'totalSemua',
+            'totalPeriode',
+            'statistics',
+            'recentMembers',
+            'pembayaran'
+        ));
     }
 }

@@ -13,7 +13,7 @@ class KelasController extends Controller
     public function index()
     {
         $classes = Kelas::all();
-        return view('welcome', compact('classes'));
+        return view('classes.index', compact('classes'));
     }
 
     // Menampilkan form tambah kelas

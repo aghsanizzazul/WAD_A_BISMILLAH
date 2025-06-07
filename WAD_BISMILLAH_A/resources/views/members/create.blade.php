@@ -1,83 +1,69 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-            <h2 class="text-2xl font-bold text-gray-800">Tambah Anggota Baru</h2>
-            <a href="{{ route('members.index') }}" class="text-gray-600 hover:text-gray-900 flex items-center">
-                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
-                Kembali
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Add New Member</h1>
+            <a href="{{ route('members.index') }}" class="text-blue-600 hover:text-blue-800">
+                Back to List
             </a>
         </div>
 
-        <div class="p-6">
-            @if ($errors->any())
-            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
-                <p class="font-bold">Ada beberapa masalah dengan input Anda:</p>
-                <ul class="mt-2 list-disc list-inside">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
+        @if($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <ul class="list-disc list-inside">
+                @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
 
+        <div class="bg-white shadow-md rounded-lg p-6">
             <form action="{{ route('members.store') }}" method="POST">
                 @csrf
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-6">
                     <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nama</label>
-                        <input type="text" name="name" id="name" value="{{ old('name') }}" 
-                            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-                            required>
+                        <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                        <input type="text" name="name" id="name" value="{{ old('name') }}" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     </div>
 
                     <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input type="email" name="email" id="email" value="{{ old('email') }}"
-                            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-                            required>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" name="email" id="email" value="{{ old('email') }}" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     </div>
 
                     <div>
-                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Nomor Telepon</label>
-                        <input type="tel" name="phone" id="phone" value="{{ old('phone') }}"
-                            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-                            required minlength="10" pattern="[0-9]{10,}">
-                        <p class="mt-1 text-sm text-gray-500">Minimal 10 digit angka</p>
+                        <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                        <input type="tel" name="phone" id="phone" value="{{ old('phone') }}" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        <p class="mt-1 text-sm text-gray-500">Must be at least 10 digits</p>
                     </div>
 
                     <div>
-                        <label for="join_date" class="block text-sm font-medium text-gray-700 mb-2">Tanggal Bergabung</label>
-                        <input type="date" name="join_date" id="join_date" 
-                            value="{{ old('join_date', date('Y-m-d')) }}"
-                            max="{{ date('Y-m-d') }}"
-                            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-                            required>
+                        <label for="join_date" class="block text-sm font-medium text-gray-700">Join Date</label>
+                        <input type="date" name="join_date" id="join_date" value="{{ old('join_date', date('Y-m-d')) }}" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     </div>
 
                     <div>
-                        <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                        <select name="status" id="status" 
-                            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                        <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                        <select name="status" id="status" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                             <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
                             <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
                         </select>
                     </div>
-                </div>
 
-                <div class="mt-6 flex justify-end space-x-3">
-                    <button type="button" onclick="window.location.href='{{ route('members.index') }}'"
-                        class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition duration-200">
-                        Batal
-                    </button>
-                    <button type="submit"
-                        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">
-                        Simpan Anggota
-                    </button>
+                    <div class="flex justify-end">
+                        <button type="submit"
+                            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            Add Member
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
