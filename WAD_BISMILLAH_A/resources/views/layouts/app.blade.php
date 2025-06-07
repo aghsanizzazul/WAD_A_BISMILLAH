@@ -26,6 +26,7 @@
                     <a href="{{ route('langganan.index') }}" class="text-blue-500 mr-4">Subscriptions</a>
                     <a href="{{ route('classes.index') }}" class="text-blue-500 mr-4">Classes</a>
                     <a href="{{ route('pelatih.index') }}" class="text-blue-500 mr-4">Trainers</a>
+                    <a href="{{ route('attendances.index') }}" class="text-blue-500 mr-4">Attendances</a>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
                         <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">

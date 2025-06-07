@@ -9,6 +9,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\AttendanceController;
 
 // Authentication Routes
 Auth::routes();
@@ -60,6 +61,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/classes/{id}/edit', [KelasController::class, 'edit'])->name('classes.edit');
         Route::put('/classes/{id}', [KelasController::class, 'update'])->name('classes.update');
         Route::delete('/classes/{id}', [KelasController::class, 'destroy'])->name('classes.destroy');
+
+        //attendance
+        Route::resource('attendances', AttendanceController::class);
     });
 });
 
